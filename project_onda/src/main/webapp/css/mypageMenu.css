@@ -1,0 +1,9 @@
+@charset "UTF-8";
+
+ header#intro {display: inline-block;
+ width: 230px;
+ border: 1px solid red; 
+ margin-right: 20px; }
+ 
+ .cont_right {display: inline-block;
+ border: 1px solid red; }

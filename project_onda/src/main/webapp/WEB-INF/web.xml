@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>project</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+  </welcome-file-list>
+  
+  <!-- 회원 컨트롤러 -->
+  <servlet>
+    <servlet-name>CustomerFrontController</servlet-name>
+    <servlet-class>com.itwillbs.customer.action.CustomerFrontController</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>CustomerFrontController</servlet-name>
+    <url-pattern>*.cu</url-pattern>
+  </servlet-mapping>
+  
+  <!-- 게시판 컨트롤러 -->
+  <servlet>
+    <servlet-name>BoardFrontController</servlet-name>
+    <servlet-class>com.itwillbs.board.action.BoardFrontController</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>BoardFrontController</servlet-name>
+    <url-pattern>*.bo</url-pattern>
+  </servlet-mapping>
+  
+  <!-- 공지게시판 컨트롤러 -->
+  <servlet>
+    <servlet-name>NotiFrontController</servlet-name>
+    <servlet-class>com.itwillbs.notice.action.NotiFrontController</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>NotiFrontController</servlet-name>
+    <url-pattern>*.no</url-pattern>
+  </servlet-mapping>
+  
+  <!-- 예약 컨트롤러 -->
+  <servlet>
+    <servlet-name>ResFrontController</servlet-name>
+    <servlet-class>com.itwillbs.res.action.ResFrontController</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>ResFrontController</servlet-name>
+    <url-pattern>*.re</url-pattern>
+  </servlet-mapping>
+  
+  <!-- 메뉴 컨트롤러 -->
+  <servlet>
+	<servlet-name>MenuFrontController</servlet-name>
+	<servlet-class>com.itwillbs.menu.action.MenuFrontController</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+	<servlet-name>MenuFrontController</servlet-name>
+	<url-pattern>*.mn</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+	<servlet-name>CartFrontController</servlet-name>
+	<servlet-class>com.itwillbs.cart.action.CartFrontController</servlet-class>
+</servlet>
+<servlet-mapping>
+	<servlet-name>CartFrontController</servlet-name>
+	<url-pattern>*.ca</url-pattern>
+</servlet-mapping>
+  
+  
+</web-app>
