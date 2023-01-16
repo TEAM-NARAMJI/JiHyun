@@ -13,7 +13,6 @@ import javax.sql.DataSource;
 public class CartDAO {
 	Connection con = null;
 	PreparedStatement isAddedPstmt = null;
-	PreparedStatement pstmt3 = null;
 	PreparedStatement pstmt2 = null;
 	PreparedStatement pstmt = null;
 	ResultSet rs = null;
@@ -35,12 +34,6 @@ public class CartDAO {
 		if (isAddedPstmt != null)
 			try {
 				isAddedPstmt.close();
-			} catch (SQLException ex) {
-				ex.printStackTrace();
-			}
-		if (pstmt3 != null)
-			try {
-				pstmt3.close();
 			} catch (SQLException ex) {
 				ex.printStackTrace();
 			}
@@ -134,10 +127,10 @@ public class CartDAO {
 				// insert
 				
 				// crt_num 카트번호 구하기
-				String sql3 = "select max(crt_num) from cart";
-				pstmt3 = con.prepareStatement(sql3);
+				String sql2 = "select max(crt_num) from cart";
+				pstmt2 = con.prepareStatement(sql2);
 
-				rs=pstmt3.executeQuery();
+				rs=pstmt2.executeQuery();
 
 				int max = 0;
 				if(rs.next()) {
@@ -146,35 +139,24 @@ public class CartDAO {
 				}
 				
 				
-				String sql2 = "select ? *\r\n"
-						+ "			(select menu_price \r\n"
-						+ "	   		   from menu\r\n"
-						+ "	  		  where menu_num=?)\r\n"
-						+ "		   as crt_price\r\n"
-						+ "		 from cart\r\n"
-						+ "		where crt_num=?";
-				
-				pstmt2 = con.prepareStatement(sql2);
-				pstmt2.setInt(1, dto.getCrt_count());
-				pstmt2.setInt(2, dto.getMenu_num());
-				pstmt2.setInt(3, crt_num);
-				
-				rs=pstmt2.executeQuery();
-
-				int crt_price=0;
-				if(rs.next()) {
-				crt_price = rs.getInt("crt_price");
-				System.out.println("crt_price : " + crt_price);
-				}
-				
-				String sql = "insert into cart(crt_num, cus_id, menu_num, crt_count, crt_price)\r\n"
-						+ "	  values(?, ?, ?, ?, ?) ";
+				String sql = "insert into cart(crt_num\r\n"
+						+ "			   , cus_id\r\n"
+						+ "               , menu_num\r\n"
+						+ "               , crt_count\r\n"
+						+ "               , crt_price)\r\n"
+						+ "  values(?, ?, ?, ?, \r\n"
+						+ "				(select A.crt_price from\r\n"
+						+ "								 (select menu_price * ? as crt_price\r\n"
+						+ "				 				 	from menu\r\n"
+						+ "								   where menu_num=?)A))";
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, max);
 				pstmt.setString(2, dto.getCus_id());
 				pstmt.setInt(3, dto.getMenu_num());
 				pstmt.setInt(4, dto.getCrt_count());
-				pstmt.setInt(5, crt_price);
+				pstmt.setInt(5, dto.getCrt_count());
+				pstmt.setInt(6, dto.getMenu_num());
+				
 				
 				pstmt.executeUpdate();
 			}
@@ -201,12 +183,12 @@ public class CartDAO {
 			
 			String sql = "update cart \r\n"
 					+ "   set crt_count= ?\r\n"
-					+ "     , crt_price= (SELECT A.crt_price \r\n"
-					+ "					FROM (select menu_price * ? as crt_price\r\n"
-					+ "							 from menu\r\n"
-					+ "							where menu_num = ?\r\n"
-					+ "						 ) A)\r\n"
-					+ " where crt_num= ?";
+					+ "     , crt_price= (select A.crt_price \r\n"
+					+ "						from (select menu_price * ? as crt_price\r\n"
+					+ "							    from menu\r\n"
+					+ "							   where menu_num = ?\r\n"
+					+ "						 	 ) A)\r\n"
+					+ "  where crt_num= ?";
 			
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, dto.getCrt_count());
@@ -360,7 +342,7 @@ public class CartDAO {
 			String sql = "select menu_name from menu where menu_num=?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, menu_num);
-			// TODO 오류!
+
 			rs=pstmt.executeQuery();
 			
 			if(rs.next()) {
@@ -387,7 +369,7 @@ public class CartDAO {
 			String sql = "select menu_img from menu where menu_num=?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, menu_num);
-			// TODO 오류!
+
 			rs=pstmt.executeQuery();
 			
 			if(rs.next()) {
@@ -404,9 +386,36 @@ public class CartDAO {
 		
 		return MenuImg;
 		
-		
-		
 	}
+	
+	public int getTotalPrice(String cus_id) {
+		int totalPrice = 0;
+		
+		try {
+			con = getConnection();
+			
+			String sql = "select sum(crt_price) as totalPrice from cart where cus_id=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, cus_id);
+			// TODO 오류!
+			rs=pstmt.executeQuery();
+			
+			if(rs.next()) {
+				totalPrice = rs.getInt("totalPrice");
+				
+			}
+			
+			System.out.println("totalPrice: " + totalPrice);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+		
+		return totalPrice;
+		
+	} // getTotalPrice() 메서드 끝
 	
 
 }

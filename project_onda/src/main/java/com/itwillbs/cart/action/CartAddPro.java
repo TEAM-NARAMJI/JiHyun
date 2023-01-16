@@ -14,7 +14,7 @@ public class CartAddPro implements Action {
 		request.setCharacterEncoding("utf-8");
 		
 		HttpSession session = request.getSession();
-		String cus_id = (String)session.getAttribute("id");
+		String cus_id = (String)session.getAttribute("cus_id");
 		
 		int menu_num = Integer.parseInt(request.getParameter("menu_num"));
 		

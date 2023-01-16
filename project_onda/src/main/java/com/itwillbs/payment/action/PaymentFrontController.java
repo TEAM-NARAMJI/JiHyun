@@ -1,4 +1,4 @@
-package com.itwillbs.cart.action;
+package com.itwillbs.payment.action;
 
 import java.io.IOException;
 
@@ -8,10 +8,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class CartFrontController extends HttpServlet{
+
+public class PaymentFrontController extends HttpServlet{
 
 	protected void doProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		
 		String requestURI=request.getRequestURI();
 		System.out.println("requestURI : "+requestURI);
 
@@ -25,53 +26,32 @@ public class CartFrontController extends HttpServlet{
 		ActionForward forward=null;
 		Action action=null;
 		
-		if(strpath.equals("/Menu.ca")) {
-			forward=new ActionForward();
-			forward.setPath("./cart/menu.jsp");
+		if(strpath.equals("/OrderPayList.pm")) {
+			action = new OrderPayList();
+			
+			try {
+				// 메서드호출
+				forward=action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		
+		} 
+		
+		// 테스트용 --------------------------------------------
+		else if(strpath.equals("/payment_test.pa")) {
+			forward = new ActionForward();
+			forward.setPath("./payment/payment_test.jsp");
 			forward.setRedirect(false);
 			
-		} else if(strpath.equals("/CartAddPro.ca")) {
-			action = new CartAddPro();
+//		} if(strpath.equals("/payment.pa")) {
+//			forward = new ActionForward();
+//			forward.setPath("./payment/payment.jsp");
+//			forward.setRedirect(false);
+		// ---------------------------------------------
 
-			try {
-				// 메서드호출
-				forward=action.execute(request, response);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-		} else if(strpath.equals("/CartList.ca")) {
-			action=new CartList();
-			try {
-				// 메서드호출
-				forward=action.execute(request, response);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		} else if(strpath.equals("/CartInsertPro.ca")) {
-			action = new CartAddPro();
-
-			try {
-				// 메서드호출
-				forward=action.execute(request, response);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-
-		} else if(strpath.equals("/CartUpdate.ca")) {
-			action = new CartUpdate();
-			
-			try {
-				forward=action.execute(request, response);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			
-		} else if(strpath.equals("/CartDelete.ca")) {
-			action = new CartDelete();
+		}  else if(strpath.equals("/PaymentPro.pa")) {
+			action = new PaymentPro();
 			
 			try {
 				// 메서드호출
@@ -79,9 +59,8 @@ public class CartFrontController extends HttpServlet{
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
-		} else if(strpath.equals("/CartTotalPrice.ca")) {
-			action = new CartTotalPrice();
+		} else if(strpath.equals("/MenuPayPro.pa")) {
+//			action = new MenuPayPro();
 			
 			try {
 				// 메서드호출
@@ -89,19 +68,35 @@ public class CartFrontController extends HttpServlet{
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
-			
-			
 		}
 		
-
-
-
-
-
-
-
-
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		if(forward != null) {
 			if(forward.isRedirect()) {
 				response.sendRedirect(forward.getPath());
@@ -111,10 +106,10 @@ public class CartFrontController extends HttpServlet{
 			}
 
 		}
-
-
-	} 
-
+		
+		
+		
+	}
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doProcess(request, response);
