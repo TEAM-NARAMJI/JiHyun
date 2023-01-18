@@ -7,27 +7,12 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>cart/orderPayList.jsp</title>
+<title>cart/orderList.jsp</title>
 
 <script type="text/javascript" src="./js/jquery-3.6.3.js"></script>
-<script type="text/javascript">
-	
-	function fun1() {
-		history.back();
-	}
+<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 
-// 	function isChecked() {
 
-// 		var checkType = false;
-
-// 		$('.crt_num').each(function(index, item) {
-// 			if (item.checked) {
-// 				checkType = true;
-// 			}
-// 		})
-// 		return checkType;
-// 	}
-</script>
 </head>
 <body>
 <h1>주문결제 페이지</h1>
@@ -40,35 +25,8 @@ if(cus_id == null) {
 	response.sendRedirect("./CustomerLoginForm.cu");
 }
 
-
-
-
-// String[] chk =request.getParameterValues("box");
-
-// 	out.println("이름:"+name);
-// 	out.println("메모내용:"+memo);
-// 	out.println("<br>");
-// try{
-//    // 선택한 값이 없으면 back.
-//    if(chk == null || chk.length <= 0){
-//      return;
-//    }
-//    for(int i=0; i<chk.length; i++){
-//      out.println("선택한 값 : " + chk[i] + "<br>");
-//    }
-//    out.println(" ");
-// }catch(Exception e){
-//    System.out.println(e);
-// }
-
-
-List<CartDTO> cartList
-=(List<CartDTO>)request.getAttribute("cartList");
-
-
-
-// System.out.println("전달 받은 배열 주소 : "+cartList);
-
+// String[] chk =request.getParameterValues("crt_num");
+// System.out.println(chk.toString());
 
 
 %>
@@ -89,45 +47,46 @@ List<CartDTO> cartList
 // 		out.println(item + "<br>");
 // }
 
-List<CartDTO> orderPayList
-=(List<CartDTO>)request.getAttribute("orderPayList");
+%> 
+
+<form class = "payment" action="./PaymentInsertPro.pa" method="post">
+
+<%
+List<CartDTO> orderList = (List<CartDTO>)request.getAttribute("orderList");
 
 String menu_name="";
 String menu_img="";
+int totalPrice=0;
 CartDAO dao = new CartDAO();
 
-// String[] chk = request.getParameterValues("crt_num");
+
+%>
 
 
-// System.out.println("전달 받은 배열 주소 : "+cartList);
-
-%> 
-<form class = "payment" action="./PaymentPro.pa" method="post">
 <table border="1">
 <tr><td>no.</td><td>상품정보</td>
     <td>수량</td><td>금액</td></tr>
     <%
-    for(int i=0; i<orderPayList.size(); i++){
-		CartDTO dto=orderPayList.get(i);
+    for(int i=0; i<orderList.size(); i++){
+		CartDTO dto=orderList.get(i);
 		int menu_num = dto.getMenu_num();
 		int crt_num = dto.getCrt_num();
 		menu_name = dao.getMenuName(menu_num, crt_num);
 		menu_img = dao.getMenuImg(menu_num, crt_num);
+		totalPrice += dto.getCrt_price();
+
 		
-		// TODO
-		// crt_num => 숨기기 또는 1, 2, 3 으로 보이게 제어
-		// menu_num = > 히든
-		// 
 		%>
 
 <tr>
-	<td class="cart_info">
-		<input type="text" id="crt_num_<%=i%>" name="crt_num" class="crt_num" value="<%=dto.getCrt_num() %>" readonly>
+	<td>
+<!-- 		TODO crt_num : hidden 처리-->
+		<input type="hidden" id="crt_num_<%=i%>" name="crt_num" class="crt_num" value="<%=dto.getCrt_num() %>" readonly>
 	</td>
     <td>
     <input type="text" name="menu_num" id="menu_num_<%=i%>" class="menu_num" value="<%=dto.getMenu_num() %>" readonly>
     <img src="./upload/<%=menu_img%>" width="300" height="300">
-    <input type="text" name="menu_name" class="menu_name" value="<%=menu_name %>" readonly>
+    <input type="text" id="menu_name_<%=i%>" name="menu_name" class="menu_name" value="<%=menu_name %>" readonly>
     </td>
     <td>
     <input type="text" id="crt_count_<%=i%>" name="crt_count" class="crt_count" value="<%=dto.getCrt_count() %>" readonly>
@@ -153,14 +112,46 @@ CartDAO dao = new CartDAO();
 
 <%
 // TODO 모든 금액에 패턴적용하기 => ##,###
-
-int totalPrice = dao.getTotalPrice(cus_id);
+//	총 결제금액: readonly
 %>
-총 주문금액 <input type="text" id="total_price" class="total_price" value="<%= totalPrice%>" readonly><br>
 <hr>
-<input type="submit" value="결제하기">	
-<input type="button" value="주문수정" onclick="fun1()">
+총 결제금액 <input type="text" id="total_price" class="total_price" value="<%= totalPrice%>" readonly><br>
+<hr>
 </form>
+<input type="submit" value="결제하기" onclick="requestPay()">	
+<input type="button" value="주문수정" onclick="fun1()">
+
+<script type="text/javascript">
+	
+	function requestPay() {
+	   var IMP = window.IMP;  
+	   IMP.init('imp84126554'); //iamport 대신 자신의 "가맹점 식별코드"를 사용
+	     IMP.request_pay({
+	       pg: 'html5_inicis',
+	       pay_method: "card",
+	       merchant_uid : 'merchant_'+new Date().getTime(),
+	       name : '<%=menu_name%>' + ' 외 ' + <%=orderList.size()-1 %> + '건' ,   // 상품 이름
+	       amount : <%=totalPrice %>,      // 가격
+	       buyer_name : '<%=cus_id %>',
+	     }, function (rsp) { // callback
+	         if (rsp.success) {
+	            var msg = "결제가 완료되었습니다.";
+	            alert(msg);
+	            $(".payment").submit();
+	            
+	         } else {
+	            var msg = '결제에 실패하였습니다.\n';
+	             msg += '에러내용 : ' + rsp.error_msg;
+	             alert(msg);
+	         }
+	     });
+	   }
+	   
+	function fun1() {
+		history.back();
+	}
+</script>
+
 
 </body>
 </html>

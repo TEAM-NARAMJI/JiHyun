@@ -1,6 +1,8 @@
 package com.itwillbs.payment.db;
 
 import java.sql.Timestamp;
+import java.util.List;
+
 
 public class PaymentDTO {
 	private int pay_num;
@@ -53,6 +55,24 @@ public class PaymentDTO {
 	public void setPay_pick(String pay_pick) {
 		this.pay_pick = pay_pick;
 	}
-
+	@Override
+	public String toString() {
+		return "PaymentDTO [pay_num=" + pay_num + ", cus_id=" + cus_id + ", menu_num=" + menu_num + ", pay_price="
+				+ pay_price + ", pay_count=" + pay_count + ", pay_date=" + pay_date + ", pay_pick=" + pay_pick + "]";
+	}
+	
+	
+	
+	
+	// List<TestCartDTO> testCartList
+//	public List<PaymentDTO> ListDtoToListEntity(){
+//       List<PaymentDTO> paymentList = null;
+//    		   
+//       for(int i=0; i<testCartList.size(); i++) {
+//    	  return testCartList.stream().map(TestCartDTO::toEntity(testCartList)).collect(Collectors.toList());
+      
+//       }
+//       return paymentList;
+//    }
 
 }

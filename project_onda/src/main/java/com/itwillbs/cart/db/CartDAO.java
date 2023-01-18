@@ -238,7 +238,6 @@ public class CartDAO {
 	}
 	
 	
-	// TODO 파라미터 cus_id 받아와야하는지 생각해보기
 	public void deleteCart(int crt_num) {
 		
 		try {
@@ -416,6 +415,41 @@ public class CartDAO {
 		return totalPrice;
 		
 	} // getTotalPrice() 메서드 끝
+	
+	public ArrayList<CartDTO> getOrderList(String[] chk, String cus_id) {
+		ArrayList<CartDTO> orderList = new ArrayList<CartDTO>();
+		
+		try {
+			con = getConnection();
+			
+			String sql = "select * from cart where cus_id=? and crt_num in (" + String.join(", ", chk) + " ) order by crt_num";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, cus_id);
+
+			rs=pstmt.executeQuery();
+
+			while(rs.next()) {
+				CartDTO dto = new CartDTO();
+				dto.setCrt_num(rs.getInt("crt_num"));
+				dto.setCus_id(rs.getString("cus_id"));
+				dto.setMenu_num(rs.getInt("menu_num"));
+				dto.setCrt_count(rs.getInt("crt_count"));
+				dto.setCrt_price(rs.getInt("crt_price"));
+
+				orderList.add(dto);
+				System.out.println("장바구니 불러오기" + dto);
+
+				
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+		return orderList;
+
+	} // getOrderList() 메서드 끝
 	
 
 }

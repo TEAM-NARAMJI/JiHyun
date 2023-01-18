@@ -31,7 +31,7 @@ public class CartUpdate implements Action {
 		
 		dao.updateCart(dto);
 		int cartPrice = dao.getCartPrice(dto);
-		// --------------------------------------------------
+		
 		int result = cartPrice;
 		
 		//웹으로 출력 => ajax 되돌아감
@@ -45,12 +45,7 @@ public class CartUpdate implements Action {
 		 
 		
 		
-		// --------------------------------------------------
 		
-//		ActionForward forward = new ActionForward();
-//		forward.setPath("./CartList.ca");
-//		forward.setRedirect(true);
-//		return forward;
 	
 	}
 	
