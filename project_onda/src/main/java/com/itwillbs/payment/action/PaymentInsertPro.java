@@ -52,23 +52,18 @@ public class PaymentInsertPro implements Action {
 		PaymentDAO paymentDao = new PaymentDAO();
 		CartDAO cartDao = new CartDAO();
 		
-		
 		paymentDao.insertPayment(paymentList);
 		
-		
-//		
-//		for(int i=0; i<orderList.size(); i++) {
-//			cartDao.deleteCart(orderList.get(i).getCrt_num());
-//			
-//		}
-		
-		
+		for(int i=0; i<orderList.size(); i++) {
+			cartDao.deleteCart(orderList.get(i).getCrt_num());
+			
+		}
 		
 		// 내결제 페이지 이동
 
 		ActionForward forward=new ActionForward();
-		forward.setPath("./payment/payComplete.jsp");
-		forward.setRedirect(false);
+		forward.setPath("./PayComplete.pa");
+		forward.setRedirect(true);
 		return forward;
 	}
 

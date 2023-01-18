@@ -88,6 +88,7 @@
 							PaymentDTO dto = paymentList.get(i);
 							String MenuImg = dao.getMenuImg(dto.getMenu_num());
 							String MenuName = dao.getMenuName(dto.getMenu_num());
+							
 						%>
 						<tr>
 							<td><span style="color: grey; font-size: 14px"><%=dateFormat.format(dto.getPay_date()) %></span><br>
